@@ -4,6 +4,7 @@ import cv2
 import numpy
 import pylab
 import time
+from WebcamPulse.fft import fft_better
 
 class Camera(object):
 
@@ -126,7 +127,8 @@ class HeartMonitor(object):
 		interpolated = numpy.interp(even_times, *zip(*self.buf))
 
 		# Perform the FFT
-		fft = numpy.fft.rfft(interpolated)
+		#fft = numpy.fft.rfft(interpolated)
+		fft = fft_better(interpolated)
 		return list(zip(numpy.abs(fft), numpy.angle(fft)))
 
 
