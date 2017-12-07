@@ -69,7 +69,7 @@ class FaceDetector(object):
 		gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 		faces = self.cascade.detectMultiScale(gray, 1.3, 5)
-		print(faces)
+		#print(faces)
 
 		# Detect faces
 		return faces
@@ -224,7 +224,7 @@ class FaceTracker(object):
 		"""
 
 		self.face_position = face_position
-		print(self.face_position)
+		#print(self.face_position)
 
 		self.fh_x = fh_x
 		self.fh_y = fh_y
@@ -475,23 +475,24 @@ class Program(object):
 			self.annotator.set_busy(not self.heart_monitor.buf_full)
 
 			if self.heart_monitor.ready:
-				bpm, phase, fft_data = self.heart_monitor.get_bpm()
+				if len(self.heart_monitor.buf) % 2 == 0:
+					bpm, phase, fft_data = self.heart_monitor.get_bpm()
 
-				# Draw the OSD
-				if fft_data and self.show_fft:
-					self.annotator.draw_fft(frame, fft_data,
-					                        self.heart_monitor.min_bpm,
-					                        self.heart_monitor.max_bpm)
+					# Draw the OSD
+					if fft_data and self.show_fft:
+						self.annotator.draw_fft(frame, fft_data,
+						                        self.heart_monitor.min_bpm,
+						                        self.heart_monitor.max_bpm)
+
+					if self.show_bpm:
+						self.annotator.draw_bpm(frame, bpm)
+						self.annotator.draw_phase(frame, phase)
 
 				if self.show_face:
 					self.annotator.draw_face(frame)
 
 				if self.show_forehead:
 					self.annotator.draw_forehead(frame)
-
-				if self.show_bpm:
-					self.annotator.draw_bpm(frame, bpm)
-					self.annotator.draw_phase(frame, phase)
 
 		# Display the (possibly annotated) frame
 		cv2.imshow(self.window, frame)
